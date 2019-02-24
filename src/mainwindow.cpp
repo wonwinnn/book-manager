@@ -10,7 +10,8 @@ enum ColumnIndex
     Column_Cover = 4
 };
 
-bool isIsbn(const QString &src) {
+bool isIsbn(const QString &src) 
+{
     if (src.size() != 13) return 0;
     const char *s = src.toUtf8().data();
     while(*s && *s>='0' && *s<='9') s++;
