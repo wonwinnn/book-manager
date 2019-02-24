@@ -68,11 +68,12 @@ static bool createConnection()
                      "Click Cancel to exit."), QMessageBox::Cancel);
         return false;
     }
-
     QSqlQuery query;
-    query.exec("create table book (isbn varchar primary key, "
-               "title varchar)");
-
+    query.exec("create table book (isbn varchar primary key,"
+               "title varchar, "
+               "authors varchar, "
+               "rating varchar, "
+               "coverdata blob)");
     return true;
 }
 //! [0]

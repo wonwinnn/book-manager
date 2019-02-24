@@ -14,11 +14,15 @@ TEMPLATE = app
 
 SOURCES += \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    networker.cpp \
+    book.cpp
 
 HEADERS  += \
     connection.h \
-    mainwindow.h
+    mainwindow.h \
+    networker.h \
+    book.h
 
 FORMS    += \
     mainwindow.ui

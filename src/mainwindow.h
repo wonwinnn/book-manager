@@ -9,10 +9,17 @@
 #include <QtSql>
 #include <QMessageBox>
 #include <QDebug>
+#include "networker.h"
+#include "book.h"
 
 namespace Ui {
 class MainWindow;
 }
+
+enum RemoteRequest {
+    FetchInfo,
+    FetchCover
+};
 
 class MainWindow : public QMainWindow
 {
@@ -21,17 +28,18 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+    void RefreshLbl();
 
 private slots:
     void on_AddBtn_clicked();
     void on_DelBtn_clicked();
-    void on_SearchBtn_clicked();
-    void replyFinished(QNetworkReply *reply);
 
 private:
     Ui::MainWindow *ui;
     QSqlTableModel *model;
-    QNetworkAccessManager manager;
+    RemoteRequest request;
+    NetWorker *netWorker;
+    Book book;
 };
 
 #endif // MAINWINDOW_H
