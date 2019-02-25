@@ -12,19 +12,19 @@ public:
     Book();
     ~Book();
 
-    QString getIsbn();
+    QString getIsbn() const;
     void setIsbn(const QString &isbn);
 
-    QString getTitle();
+    QString getTitle() const;
     void setTitle(const QString &title);
 
-    QStringList getAuthors();
+    QStringList getAuthors() const;
     void setAuthors(const QStringList &authors);
 
-    QString getRating();
+    QString getRating() const;
     void setRating(const QString &rating);
 
-    QByteArray getCover();
+    QByteArray getCover() const;
     void setCover(const QByteArray &coverdata);
 
     //void Added(bool &added);
