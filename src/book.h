@@ -43,7 +43,7 @@ public:
     QStringList m_authors;
     QString m_rating;
     QByteArray m_coverdata;
-    //bool m_isAdded;
+   // bool m_isAdded;
 };
 
 #endif // BOOK_H

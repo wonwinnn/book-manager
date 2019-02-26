@@ -49,6 +49,8 @@ MainWindow::MainWindow(QWidget *parent) :
     //ui->BookView->horizontalHeader()->setMaximumSectionSize(123);
     //ui->BookView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 
+    selectionModel = ui->BookView->selectionModel();
+
     netWorker = NetWorker::instance();
 
     connect(ui->IsbnEdit,&QLineEdit::textChanged,[=](){
@@ -89,11 +91,10 @@ MainWindow::MainWindow(QWidget *parent) :
         }
         case FetchCover:{
             book.setCover(reply->readAll());
+            RefreshLbl();
+            isAdded(book.getIsbn());
         }
         }
-        RefreshLbl();
-        ui->AddBtn->setEnabled(true);
-        ui->DelBtn->setEnabled(false);
     });
 
     connect(ui->BookView, &QTableView::clicked, [=](){
@@ -102,8 +103,7 @@ MainWindow::MainWindow(QWidget *parent) :
         int curRow = ui->BookView->currentIndex().row(); //select current row
         book.setIsbn(model->data(model->index(curRow,Column_Isbn)).toString());
         book.setTitle(model->data(model->index(curRow,Column_Title)).toString());
-        QString authors = (model->data(model->index(curRow,Column_Authors))).toString();
-        book.setAuthors(authors.split(","));
+        book.setAuthors(((model->data(model->index(curRow,Column_Authors))).toString()).split(","));
         book.setRating(model->data(model->index(curRow,Column_Rating)).toString());
         book.setCover(model->data(model->index(curRow,Column_Cover)).toByteArray());
         /*QSqlQuery query;
@@ -143,7 +143,7 @@ void MainWindow::on_AddBtn_clicked()
         qDebug() << "Error inserting into table:\n" << query.lastError();*/
 
     model->submitAll(); //refresh qtableview
-    //book.Added(true);
+    //ui->AddBtn->setEnabled(false);
 }
 
 void MainWindow::on_DelBtn_clicked()
@@ -167,4 +167,27 @@ void MainWindow::RefreshLbl()
     QPixmap cover;
     cover.loadFromData(book.getCover());
     ui->CoverLbl->setPixmap(cover);
+    ui->AddBtn->setEnabled(!isAdded(book.getIsbn()));
+    ui->DelBtn->setEnabled(isAdded(book.getIsbn()));
+}
+
+bool MainWindow::isAdded(const QString &isbn)
+{
+    QSqlQuery query;
+    query.exec(QString("SELECT * from book WHERE isbn = '%1'").arg(isbn));
+    if(!query.next()){
+        //qDebug() << "Hasn't added" << endl;
+        return 0;
+    }
+    else{
+        //qDebug() << "Has added" << endl;
+        return 1;
+    }
+
+    /*
+    //The method below will update the tableview
+    model->setFilter(QString("isbn= ‘%1’").arg(isbn));
+    if (model->select()) qDebug() << "Have added" << endl;
+    else qDebug() << "Haven't added" << endl;
+    */
 }
