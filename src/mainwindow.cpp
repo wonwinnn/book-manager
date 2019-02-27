@@ -83,18 +83,21 @@ MainWindow::MainWindow(QWidget *parent) :
                 book.setRating(ratObj["average"].toString());
                 request = FetchCover;
                 netWorker->get(jsonObject["image"].toString());
+                //qDebug() << "FetchInfo";
             }
             else{
                 qDebug() << "Error";
             }
-            reply->deleteLater();
+            break;
         }
         case FetchCover:{
             book.setCover(reply->readAll());
             RefreshLbl();
-            isAdded(book.getIsbn());
+            //qDebug() << "FetchCover";
+            break;
         }
         }
+        reply->deleteLater();
     });
 
     connect(ui->BookView, &QTableView::clicked, [=](){
@@ -176,18 +179,23 @@ bool MainWindow::isAdded(const QString &isbn)
     QSqlQuery query;
     query.exec(QString("SELECT * from book WHERE isbn = '%1'").arg(isbn));
     if(!query.next()){
-        //qDebug() << "Hasn't added" << endl;
+        //qDebug() << "The book doesn't exist." << endl;
         return 0;
     }
     else{
-        //qDebug() << "Has added" << endl;
+        //qDebug() << "The book exists." << endl;
         return 1;
     }
-
     /*
     //The method below will update the tableview
-    model->setFilter(QString("isbn= ‘%1’").arg(isbn));
-    if (model->select()) qDebug() << "Have added" << endl;
-    else qDebug() << "Haven't added" << endl;
+    model->setFilter(QString("isbn= '%1'").arg(isbn));
+    if (!model->select()){
+        qDebug() << "The book doesn't exist." << endl;
+        return 0;
+    }
+    else{
+        qDebug() << "The book exists." << endl;
+        return 1;
+    }
     */
 }
