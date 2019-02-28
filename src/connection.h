@@ -57,23 +57,38 @@
 //! [0]
 static bool createConnection()
 {
-    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
-    db.setDatabaseName("book.db");
+    //use SQLite
+    //QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
+    //db.setDatabaseName("book.db");
+
+    //use MySQL
+    QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL");
+    db.setHostName("localhost");
+    db.setDatabaseName("book");
+    db.setUserName("root");
+    db.setPassword("123456");
     if (!db.open()) {
         QMessageBox::critical(0, qApp->tr("Cannot open database"),
-            qApp->tr("Unable to establish a database connection.\n"
-                     "This example needs SQLite support. Please read "
-                     "the Qt SQL driver documentation for information how "
-                     "to build it.\n\n"
+            qApp->tr("Unable to establish a database connection.\n\n"
                      "Click Cancel to exit."), QMessageBox::Cancel);
         return false;
     }
     QSqlQuery query;
-    query.exec("create table book (isbn varchar primary key,"
+
+    //SQLite
+    /*query.exec("create table book (isbn varchar primary key,"
                "title varchar, "
                "authors varchar, "
                "rating varchar, "
+               "coverdata blob)");*/
+
+    //MySQL
+    query.exec("create table book (isbn varchar(20) primary key,"
+               "title varchar(100), "
+               "authors varchar(100), "
+               "rating varchar(10), "
                "coverdata blob)");
+
     return true;
 }
 //! [0]
