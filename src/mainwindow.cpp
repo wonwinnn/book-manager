@@ -82,7 +82,9 @@ MainWindow::MainWindow(QWidget *parent) :
                 QJsonObject ratObj = ratVal.toObject();
                 book.setRating(ratObj["average"].toString());
                 request = FetchCover;
-                netWorker->get(jsonObject["image"].toString());
+                QJsonValue imgVal = jsonObject.value("images");
+                QJsonObject imgObj = imgVal.toObject();
+                netWorker->get(imgObj["small"].toString());
                 //qDebug() << "FetchInfo";
             }
             else{
@@ -146,7 +148,7 @@ void MainWindow::on_AddBtn_clicked()
         qDebug() << "Error inserting into table:\n" << query.lastError();*/
 
     model->submitAll(); //refresh qtableview
-    //ui->AddBtn->setEnabled(false);
+    ui->AddBtn->setEnabled(false);
 }
 
 void MainWindow::on_DelBtn_clicked()

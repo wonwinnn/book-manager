@@ -64,7 +64,6 @@ static bool createConnection()
     //use MySQL
     QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL");
     db.setHostName("localhost");
-    db.setDatabaseName("book");
     db.setUserName("root");
     db.setPassword("123456");
     if (!db.open()) {
@@ -73,6 +72,7 @@ static bool createConnection()
                      "Click Cancel to exit."), QMessageBox::Cancel);
         return false;
     }
+
     QSqlQuery query;
 
     //SQLite
@@ -83,11 +83,24 @@ static bool createConnection()
                "coverdata blob)");*/
 
     //MySQL
-    query.exec("create table book (isbn varchar(20) primary key,"
+    query.exec("CREATE DATABASE IF NOT EXISTS book");
+    db.setDatabaseName("book");
+    if (!db.open()) {
+        QMessageBox::critical(0, qApp->tr("Cannot open database"),
+            qApp->tr("Unable to open database book.\n\n"
+                     "Click Cancel to exit."), QMessageBox::Cancel);
+        return false;
+    }
+
+    query.exec("CREATE TABLE IF NOT EXISTS book (isbn varchar(20) primary key,"
                "title varchar(100), "
                "authors varchar(100), "
                "rating varchar(10), "
                "coverdata blob)");
+    if (query.lastError().isValid()){
+        qDebug() << query.lastError() << endl;
+        qDebug() << "Create table failed." << endl;
+    }
 
     return true;
 }
